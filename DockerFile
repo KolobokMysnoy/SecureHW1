@@ -1,0 +1,15 @@
+# Use the official MongoDB image as the base image
+FROM mongo:6
+
+# Expose the default MongoDB port
+EXPOSE 27017
+
+# Set environment variables for MongoDB
+ENV MONGO_INITDB_ROOT_USERNAME=admin
+ENV MONGO_INITDB_ROOT_PASSWORD=password
+
+# Create a directory for data storage (optional but recommended for data persistence)
+# RUN mkdir -p /data/db
+
+# Start the MongoDB server
+CMD ["mongod"]
