@@ -1,8 +1,7 @@
-package main
+package bd
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -23,9 +22,6 @@ func createMongoDBClient() (*mongo.Client, error) {
 	clientOptions := options.Client().
 		ApplyURI("mongodb://" + Login + ":" + Password + "@" +
 			IpConnectMongo + ":" + PortConnectMongo)
-	fmt.Print("mongodb://" + Login + ":" + Password + "@" +
-		IpConnectMongo + ":" + PortConnectMongo)
-	// "mongodb://admin:password@mongo6.6:27017"
 
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {

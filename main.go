@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	bd "github.com/KolobokMysnoy/SecureHW1/BD"
 )
 
 func main() {
 	// Create an HTTP server that listens on port 8080
-	bd := MongoDB{}
+	bd := bd.MongoDB{}
 	p := ProxyHTTP{}
 	p.SaveReqAndResp(bd.SaveResponseRequest)
 	handler := p

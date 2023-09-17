@@ -1,11 +1,8 @@
-module SecureHW1
+module bd
 
 go 1.21.0
 
-require (
-	github.com/go-chi/chi v1.5.5
-	go.mongodb.org/mongo-driver v1.12.1
-)
+require go.mongodb.org/mongo-driver v1.12.1
 
 require (
 	github.com/golang/snappy v0.0.1 // indirect
