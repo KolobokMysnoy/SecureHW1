@@ -13,5 +13,7 @@ RUN go build -o main ./main.go
 # Expose port 8080 to the outside world
 EXPOSE 8081
 
+RUN go mod tidy
+
 # Command to run the executable
 CMD ["./main"]

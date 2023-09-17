@@ -1,4 +1,4 @@
-module proxy
+module github.com/KolobokMysnoy/SecureHW1/proxy
 
 go 1.21.0
 
@@ -19,9 +19,4 @@ require (
 require (
 	github.com/SecureHW1/general/BD v0.0.1
 	github.com/SecureHW1/general/requestresponsestruct v0.0.1
-)
-
-replace (
-	github.com/SecureHW1/general/BD => ../general/BD
-	github.com/SecureHW1/general/requestresponsestruct => ../general/requestresponsestruct
 )

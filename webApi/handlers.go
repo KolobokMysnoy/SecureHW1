@@ -9,8 +9,8 @@ import (
 	"net/url"
 	"strings"
 
-	BD "github.com/SecureHW1/general/BD"
-	rrs "github.com/SecureHW1/general/requestresponsestruct"
+	BD "github.com/KolobokMysnoy/SecureHW1/general/BD"
+	rrs "github.com/KolobokMysnoy/SecureHW1/general/requestresponsestruct"
 
 	"github.com/go-chi/chi"
 )

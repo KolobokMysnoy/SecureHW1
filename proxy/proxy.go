@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	rrs "github.com/SecureHW1/general/requestresponsestruct"
+	rrs "github.com/KolobokMysnoy/SecureHW1/general/requestresponsestruct"
 )
 
 type SaveFunc func(rrs.Response, rrs.Request) error
