@@ -1,4 +1,4 @@
-package bd
+package BD
 
 import (
 	"context"

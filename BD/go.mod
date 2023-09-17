@@ -1,4 +1,4 @@
-module bd
+module BD
 
 go 1.21.0
 
