@@ -1,4 +1,4 @@
-module BD
+module github.com/KolobokMysnoy/SecureHW1/BD
 
 go 1.21.0
 
