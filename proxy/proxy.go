@@ -1,14 +1,14 @@
 package main
 
 import (
-	rrs "SecureHW1/requestresponsestruct"
 	"bytes"
-	"fmt"
 	"io"
 	"log"
 	"net"
 	"net/http"
 	"strings"
+
+	rrs "github.com/SecureHW1/general/requestresponsestruct"
 )
 
 type SaveFunc func(rrs.Response, rrs.Request) error
@@ -27,8 +27,6 @@ func (p *ProxyHTTP) SaveReqAndResp(addFunc SaveFunc) {
 }
 
 func (p ProxyHTTP) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
-	fmt.Println("BODY", req.Body, req.ContentLength)
-
 	prepare := PreparationForHttp{}
 	prepare.Prepare(wr, req)
 	log.Print("Start serving HTTP")
@@ -76,8 +74,10 @@ func (p ProxyHTTP) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	log.Print("Get cookies")
 
 	requestToWork := rrs.Request{
+		Scheme:     req.URL.Scheme,
 		Method:     req.Method,
 		Path:       req.URL.Path,
+		Host:       req.Host,
 		GetParams:  getParams,
 		Headers:    req.Header,
 		Cookies:    cookies,
@@ -92,12 +92,13 @@ func (p ProxyHTTP) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	htmlBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Println("Error:", err)
 		return
 	}
+
 	log.Print("Get server reply")
-	fmt.Print("CODE", resp.StatusCode, "  ", resp.Header.Get("Location"))
-	response := Response{
+
+	response := rrs.Response{
 		Code:    resp.StatusCode,
 		Message: resp.Status,
 		Headers: resp.Header,

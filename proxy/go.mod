@@ -2,8 +2,6 @@ module proxy
 
 go 1.21.0
 
-require github.com/KolobokMysnoy/SecureHW1/BD v0.0.0-20230917103002-769d5efe3a36
-
 require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
@@ -16,4 +14,14 @@ require (
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
 	golang.org/x/text v0.7.0 // indirect
+)
+
+require (
+	github.com/SecureHW1/general/BD v0.0.1
+	github.com/SecureHW1/general/requestresponsestruct v0.0.1
+)
+
+replace (
+	github.com/SecureHW1/general/BD => ../general/BD
+	github.com/SecureHW1/general/requestresponsestruct => ../general/requestresponsestruct
 )

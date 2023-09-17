@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	bd "github.com/KolobokMysnoy/SecureHW1/BD"
+	bd "github.com/SecureHW1/general/BD"
 )
 
 func main() {

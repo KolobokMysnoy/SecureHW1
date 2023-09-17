@@ -1,8 +1,16 @@
-module github.com/KolobokMysnoy/SecureHW1/BD
+module BD
 
 go 1.21.0
 
 require go.mongodb.org/mongo-driver v1.12.1
+
+require (
+	github.com/SecureHW1/general/requestresponsestruct v0.0.1
+)
+
+replace (
+	github.com/SecureHW1/general/requestresponsestruct => ../general/requestresponsestruct
+)
 
 require (
 	github.com/golang/snappy v0.0.1 // indirect
