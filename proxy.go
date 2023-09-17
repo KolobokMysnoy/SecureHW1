@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -24,22 +25,13 @@ func (p *ProxyHTTP) SaveReqAndResp(addFunc SaveFunc) {
 	p.save = addFunc
 }
 
-func (p *ProxyHTTP) getClientReply(req *http.Request, wr http.ResponseWriter) (*http.Response, error) {
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		http.Error(wr, "Server Error", http.StatusInternalServerError)
-		log.Print("ServeHTTP:", err)
-		return nil, err
-	}
-
-	delHopHeaders(resp.Header)
-
-	return resp, nil
-}
-
 func (p ProxyHTTP) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
+	fmt.Println("BODY", req.Body, req.ContentLength)
+
+	prepare := PreparationForHttp{}
+	prepare.Prepare(wr, req)
+	log.Print("Start serving HTTP")
+
 	if clientIP, _, err := net.SplitHostPort(req.RemoteAddr); err == nil {
 		appendHostToXForwardHeader(req.Header, clientIP)
 	}
@@ -64,6 +56,7 @@ func (p ProxyHTTP) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			}
 		}
 	}
+	log.Print("Get post params")
 
 	getParams := make(map[string][]string)
 
@@ -73,11 +66,13 @@ func (p ProxyHTTP) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			getParams[key] = append(getParams[key], value)
 		}
 	}
+	log.Print("Get get params")
 
 	var cookies []http.Cookie
 	for _, cookie := range req.Cookies() {
 		cookies = append(cookies, *cookie)
 	}
+	log.Print("Get cookies")
 
 	requestToWork := Request{
 		Method:     req.Method,
@@ -99,7 +94,8 @@ func (p ProxyHTTP) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error:", err)
 		return
 	}
-
+	log.Print("Get server reply")
+	fmt.Print("CODE", resp.StatusCode, "  ", resp.Header.Get("Location"))
 	response := Response{
 		Code:    resp.StatusCode,
 		Message: resp.Status,
@@ -112,6 +108,7 @@ func (p ProxyHTTP) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		log.Print(err)
 		return
 	}
+	log.Print("Save data to bd")
 
 	log.Println(req.RemoteAddr, " ", resp.Status)
 
@@ -133,4 +130,43 @@ func copyHeader(dest, src http.Header) {
 			dest.Add(k, v)
 		}
 	}
+}
+
+func (p *ProxyHTTP) getClientReply(req *http.Request, wr http.ResponseWriter) (*http.Response, error) {
+	client := &http.Client{}
+
+	// Read the request body
+	requestBody, err := io.ReadAll(req.Body)
+	if err != nil {
+		http.Error(wr, "Server Error", http.StatusInternalServerError)
+		log.Print("getClientReply: Error reading request body:", err)
+		return nil, err
+	}
+
+	// Create a new request with the same method, URL, headers, and body
+	outgoingReq, err := http.NewRequest(req.Method, req.URL.String(), bytes.NewReader(requestBody))
+	if err != nil {
+		http.Error(wr, "Server Error", http.StatusInternalServerError)
+		log.Print("getClientReply: Error creating outgoing request:", err)
+		return nil, err
+	}
+
+	// Copy headers from the original request to the outgoing request
+	for key, values := range req.Header {
+		for _, value := range values {
+			outgoingReq.Header.Add(key, value)
+		}
+	}
+
+	// Perform the outgoing request
+	resp, err := client.Do(outgoingReq)
+	if err != nil {
+		http.Error(wr, "Server Error", http.StatusInternalServerError)
+		log.Print("getClientReply: Error performing outgoing request:", err)
+		return nil, err
+	}
+
+	delHopHeaders(resp.Header)
+
+	return resp, nil
 }

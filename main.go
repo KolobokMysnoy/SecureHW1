@@ -11,8 +11,7 @@ func main() {
 	bd := MongoDB{}
 	p := ProxyHTTP{}
 	p.SaveReqAndResp(bd.SaveResponseRequest)
-	prepare := PreparationForHttp{}
-	handler := prepare.Prepare(p)
+	handler := p
 
 	http.Handle("/", handler)
 	fmt.Println("Proxy server listening on :8080...")

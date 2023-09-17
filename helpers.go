@@ -27,26 +27,18 @@ func delHopHeaders(header http.Header) {
 	}
 }
 
-func deleteHopHeadersHandler(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		delHopHeaders(r.Header)
-		r.RequestURI = ""
+func deleteHopHeaders(w http.ResponseWriter, r *http.Request) {
+	delHopHeaders(r.Header)
+	r.RequestURI = ""
 
-		log.Println("Delete headers completed!")
-
-		next.ServeHTTP(w, r)
-	})
+	log.Println("Delete headers completed!")
 }
 
-func removeEncoding(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		header := r.Header
-		for _, b := range deleteSpecificHeaders {
-			header.Del(b)
-		}
-
-		next.ServeHTTP(w, r)
-	})
+func removeEncoding(w http.ResponseWriter, r *http.Request) {
+	header := r.Header
+	for _, b := range deleteSpecificHeaders {
+		header.Del(b)
+	}
 }
 
 type Preparation interface {
@@ -56,13 +48,8 @@ type Preparation interface {
 type PreparationForHttp struct {
 }
 
-func (p *PreparationForHttp) Prepare(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		next2 := deleteHopHeadersHandler(next)
-		log.Print("Delete complete")
-		next3 := removeEncoding(next2)
-		log.Print("Delete remove complete")
-		next3.ServeHTTP(w, r)
-		// deleteHopHeadersHandler(removeEncoding(next)).ServeHTTP(w, r)
-	})
+func (p *PreparationForHttp) Prepare(w http.ResponseWriter, r *http.Request) {
+	log.Print("Start prepare")
+	deleteHopHeaders(w, r)
+	removeEncoding(w, r)
 }

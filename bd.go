@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -12,13 +13,19 @@ import (
 )
 
 var (
-	IpConnectMongo   = "localhost"
+	IpConnectMongo   = "127.0.0.1"
 	PortConnectMongo = "27017"
+	Login            = "admin"
+	Password         = "password"
 )
 
 func createMongoDBClient() (*mongo.Client, error) {
 	clientOptions := options.Client().
-		ApplyURI("mongodb://" + IpConnectMongo + ":" + PortConnectMongo)
+		ApplyURI("mongodb://" + Login + ":" + Password + "@" +
+			IpConnectMongo + ":" + PortConnectMongo)
+	fmt.Print("mongodb://" + Login + ":" + Password + "@" +
+		IpConnectMongo + ":" + PortConnectMongo)
+	// "mongodb://admin:password@mongo6.6:27017"
 
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
@@ -53,7 +60,7 @@ type RequestRepository struct {
 	ID         primitive.ObjectID  `bson:"_id,omitempty"`
 	Method     string              `bson:"method"`
 	Path       string              `bson:"path"`
-	GetParams  map[string][]string `bson:"get_params"`
+	GetParams  map[string][]string `bson:"get_pa	rams"`
 	Headers    http.Header         `bson:"headers"`
 	Cookies    []http.Cookie       `bson:"cookies"`
 	PostParams map[string][]string `bson:"post_params"`
